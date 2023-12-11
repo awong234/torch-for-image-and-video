@@ -22,7 +22,6 @@ grid = grid_sim(xdim = 100, ydim = 100, offset_cap = 2, square_size = 3, train_l
 
 grid$z = 255 * grid$z
 
-
 ggplot(grid) +
     geom_tile(aes(x = x, y = y, fill = z, color = train)) +
     coord_equal()
@@ -31,13 +30,21 @@ train = grid %>% filter(train)
 test = grid %>% filter(!train)
 
 rast = raster::rasterFromXYZ(grid[, c('x', 'y', 'z')])
-raster::writeRaster(rast, filename = 'test.png', format = "PNG", overwrite = TRUE)
 
 dir.create('simimg', showWarnings = FALSE)
 
+# Export mask, only need to do this once
+
+mask = grid[, c('x', 'y', 'train')]
+mask$train = as.integer(mask$train) * 255
+mask = raster::rasterFromXYZ(mask)
+raster::writeRaster(mask, filename = file.path('simimg', 'mask.png'), format = "PNG", overwrite = TRUE)
+
 set.seed(123)
 
-for (i in 1:100) {
+# Export simulated images
+
+for (i in 1:1000) {
     grid = grid_sim(
         xdim = 100,
         ydim = 100,
@@ -50,10 +57,5 @@ for (i in 1:100) {
 
     rast = raster::rasterFromXYZ(grid[, c('x', 'y', 'z')])
     raster::writeRaster(rast, filename = file.path('simimg', sprintf('test%s.PNG', i)), format = "PNG", overwrite = TRUE)
-
-    mask = grid[, c('x', 'y', 'train')]
-    mask$train = as.integer(mask$train) * 255
-    mask = raster::rasterFromXYZ(mask)
-    raster::writeRaster(mask, filename = file.path('simimg', sprintf('mask%s.png', i)), format = "PNG", overwrite = TRUE)
 }
 
