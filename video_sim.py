@@ -122,4 +122,4 @@ def sim_blob(NSIM):
 
 
 np.random.seed(123)
-sim_blob(100)
+sim_blob(1000)
