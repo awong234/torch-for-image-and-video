@@ -108,8 +108,6 @@ def sim_blob(NSIM):
             img = img.convert('L')
             img.save(os.path.join(out_folder, f'blob_frame_{frame}.png'))
             # Save claims image
-            # max_claims = np.max(claims)
-            # claims_for_image = (claims.reshape(RES, RES) / max_claims) * 255
             claims_for_image = claims.reshape(RES, RES)
             img = Image.fromarray(claims_for_image)
             img = img.convert('L')
